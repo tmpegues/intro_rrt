@@ -1,9 +1,17 @@
-from Domain import RRT_Domain
+from Domain import Domain
 from tree import Tree
+import numpy as np
 
-# Create domain (allow default 100 x 100)
-domain  = RRT_Domain()
+#np.random.seed(0)
+#from RRTBuilder import RRT_Builder
 
-# Create tree (defaulting to the center of the 100 x 100 Domain)
-tree = Tree((50, 50))
+# Create domain (no args defaults to 100 x 100)
+domain  = Domain()
 
+# Create tree (defaults to the center of the 100 x 100 Domain)
+# [qinit], K, qdot 
+tree = Tree([50, 50], 250, 1)
+
+# Run the RRT
+tree.run_rrt(domain)
+tree.show_tree(domain)

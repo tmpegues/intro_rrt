@@ -1,15 +1,27 @@
 
 
-class RRT_Domain:
+class Domain:
     """This will be the domain for the RRT Project
        At the beginning, with no obstacles, it'll be really simple"""
 
-    def __init__(self, size_x = None, size_y = None):
-        """Creates the domain with default size 100 x 100"""
-        if size_x != None:
-            size_x = (0, 100)
-        if size_y != None:
-            size_y = (0, 100)
+    def __init__(self, dims = None):
+        """Creates the domain with default size 100 x 100
+           dims is a list of tuples of min and max values in each dimension
+               [(0,100), (0,100)] as default for a 2D 100 x 100"""
         
-        self.size_x = size_x
-        self.size_y = size_y
+        if not dims:
+            dims = [(0,100), (0,100)]
+        self.num_dims = len(dims)
+        self.dims = dims
+    
+    def in_domain(self, point):
+        """Check if provided point is in the domain
+           Does not currently check obstacles"""
+        domain_status = True
+        for i in range(self.num_dims):
+            # Check if point is below lower bound or above upper bound
+            # End immediately if outside of any dimension's bounds
+            if point[i] < self.dims[i][0] or self.dims[i][1] < point[i]:
+                return False
+                
+        return domain_status
