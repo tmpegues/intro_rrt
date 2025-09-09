@@ -5,5 +5,5 @@ from tree import Tree
 domain  = RRT_Domain()
 
 # Create tree (defaulting to the center of the 100 x 100 Domain)
-tree = Tree([50, 50])
+tree = Tree((50, 50))
 
