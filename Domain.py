@@ -1,4 +1,4 @@
-
+import numpy as np
 
 class Domain:
     """This will be the domain for the RRT Project
@@ -13,6 +13,14 @@ class Domain:
             dims = [(0,100), (0,100)]
         self.num_dims = len(dims)
         self.dims = dims
+        self.obstacles = []
+    
+    def rand_point(self):
+        """Generates a random point inside the domain"""
+        p1 = np.random.rand(self.num_dims)
+        point2 = [x*(top - bot) + bot for x, (bot, top) in zip(p1, self.dims)]
+
+        return point2
     
     def in_domain(self, point):
         """Check if provided point is in the domain

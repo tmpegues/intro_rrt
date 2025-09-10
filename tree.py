@@ -6,6 +6,10 @@ class Tree:
     """This will be the tree builder"""
 
     def __init__(self, q_init = None, K = None, qdot = None):
+        if type(q_init) == int:
+            # Randomize
+            
+            pass
         if not q_init:
             # Randomize this, eventually
             q_init = [50, 50]
@@ -13,6 +17,7 @@ class Tree:
             K == 100
         if not qdot:
             qdot = 1
+        
         
         # Each element in G will first include itself and then the point it came from 
         self.G = [(q_init,None)]
@@ -51,6 +56,9 @@ class Tree:
         # Check if qnew is a valid point in the domain
         if not domain.in_domain(qnew):
             qnew = False
+        else:
+            self.G.append((qnew,qnear))
+        
 
         if want_print:
             print(f"rand{qrand}\nnear{qnear}\ndist {dist}")
@@ -62,34 +70,32 @@ class Tree:
     
     def run_rrt(self, domain, want_print = False):
         while len(self.G) < self.K:
-            # Produce random point in domain
-            qrand = np.random.rand(self.num_dims)
-            for i in range(self.num_dims):
-                qrand[i] *= (domain.dims[i][1] - domain.dims[i][0])
+            # Get random point from the domain
+            qrand = domain.rand_point()
+            # Get nearest point in the tree
             (qnear, dist) = self.get_nearest(qrand)
+            # Get new point
             qnew = self.new_config(domain, qrand, qnear, dist, want_print = False)
-            if qnew != False:
-                self.G.append((qnew,qnear))
-                if want_print:
-                    print(len(self.G))
-                    for dot in self.G:
-                        print(f"{dot[0]},{dot[1]}")
+            # qnew will be false if this loop fails (obstacle, out of domain)
 
     def show_tree(self, domain):
         """Display the tree, but only if it's 2D"""
         if self.num_dims > 2:
-            print("I'm not dealing with high dimensions right now")
+            print("Cannot yet display more than 2D")
         else:
             ##### Begin_Citation [2] #####
             fig, ax = plt.subplots()
+            ax.set(xlim=(domain.dims[0]), ylim = domain.dims[1])
             segs = []
-            for point in self.G:
-                (x, y) =  point[0]
-                ax.scatter(x, y)
+            for ((x1,y1), point2) in self.G:
+                if point2 == None:
+                    ax.scatter(x1, y1, color = "green")
                 ##### Begin_Citation [3] #####
-                if point[1] != None:
-                    segs.append([point[0],point[1]])
-            line_segments = LineCollection(segs)   
+                elif point2 != None:
+                    (x2, y2) = point2
+                    segs.append([(x1, y1), (x2, y2)])
+                    ax.scatter(x1, y1, color = "black")
+            line_segments = LineCollection(segs, colors = "red")   
             ax.add_collection(line_segments)
             ##### End_Citation [3] #####
             plt.show()
