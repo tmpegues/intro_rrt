@@ -54,8 +54,14 @@ class Tree:
         dist1 = np.sqrt(sum((px - qx) ** 2.0 for px, qx in zip(qnear, qnew)))
 
         # Check if qnew is a valid point in the domain
-        if not domain.in_domain(qnew):
+        if domain.in_domain(qnew) == False:
             qnew = False
+        # Also check for obstacle collision 
+        if len(domain.obstacles) > 0:
+            for obs in domain.obstacles:
+                if obs.check_collision(qnew) == False:
+                    qnew = False 
+                    break
         else:
             self.G.append((qnew,qnear))
         

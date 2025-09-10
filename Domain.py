@@ -1,4 +1,5 @@
 import numpy as np
+from obstacle import Obstacle
 
 class Domain:
     """This will be the domain for the RRT Project
@@ -33,3 +34,6 @@ class Domain:
                 return False
                 
         return domain_status
+    
+    def add_obstacle(self, obstacle):
+        self.obstacles.append(obstacle)
