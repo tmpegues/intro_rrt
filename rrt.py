@@ -28,5 +28,5 @@ tree = Tree(start, 50, 5, buffer, goal)
 
 # Run the RRT
 tree.run_rrt(domain)
-
+tree.trace_path()
 tree.show_tree(domain)

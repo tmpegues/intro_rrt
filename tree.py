@@ -29,6 +29,7 @@ class Tree:
         self.qdot = qdot
         self.buffer = buffer
         self.goal = goal
+        self.path = None
 
     def get_nearest(self, point):
         best_point = None
@@ -140,9 +141,33 @@ class Tree:
                     ax.scatter(x1, y1, color = "black")
             if self.goal != None:
                 ax.scatter(self.goal[0],self.goal[1], color = "red")
-            line_segments = LineCollection(segs, colors = "red")   
-            ax.add_collection(line_segments)
+            tree_lines = LineCollection(segs, colors = "red")   
+            ax.add_collection(tree_lines)
+            # Plot the path if known
+            if self.path != None:
+                path_segs = []
+                for i in range(len(self.path) - 1):
+                    path_segs.append([(self.path[i]),(self.path[i+1])])
+                path_lines = LineCollection(path_segs, color = "blue")
+                ax.add_collection(path_lines)
+            
             ##### End_Citation [3] #####
             ax.set_aspect(1)
             plt.show()
             ##### End_Citation [2] #####
+
+    def trace_path(self):
+        """When the tree hits the goal, run this to actually find the path"""
+        last_vector = self.G[-1]
+        path = [[last_vector[0][0],last_vector[0][1]]]
+        at_start = False
+        while not at_start:
+            for vec in self.G:
+                if vec[0] != None and vec[0] == last_vector[1]:
+                    last_vector = vec
+                    break
+            path.append(last_vector[0])
+            if path[-1] == self.G[0][0]:
+                at_start = True
+        self.path = path
+            
