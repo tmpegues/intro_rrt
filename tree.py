@@ -102,6 +102,7 @@ class Tree:
                     if len(self.G) > self.K:
                         print("Steps maxed out.")
                         break
+        self.trace_path()
 
     def random_step(self, domain, want_print = False):
         # Get random point from the domain
@@ -157,8 +158,13 @@ class Tree:
             ##### End_Citation [2] #####
 
     def trace_path(self):
-        """When the tree hits the goal, run this to actually find the path"""
+        """When the tree hits the goal, run this to actually find the path
+           It sets self.path to the path, but also returns the path. If no path,
+           return None"""
         last_vector = self.G[-1]
+        if last_vector[0] != self.goal:
+            print("Tree did not hit goal")
+            return None
         path = [[last_vector[0][0],last_vector[0][1]]]
         at_start = False
         while not at_start:
@@ -170,4 +176,5 @@ class Tree:
             if path[-1] == self.G[0][0]:
                 at_start = True
         self.path = path
+        return path
             
