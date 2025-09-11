@@ -61,8 +61,6 @@ class Tree:
         if domain.in_domain(qnew) == False:
             qnew = False
         # Also check for obstacle collision
-        if len(self.G) == 18:
-            pass 
         elif len(domain.obstacles) > 0 and qnew != False:
             for obs in domain.obstacles:
                 if obs.check_collision(qnew, qnear, self.buffer) == False:
@@ -88,13 +86,10 @@ class Tree:
                 
         else:
             while self.G[-1][0] != self.goal:
-                if len(self.G) == 18:
-                    pass
                 # Check if there's a straight shot from the last point to the goal
                 found_shot = True
                 if len(domain.obstacles) > 0:
                     for obs in domain.obstacles:
-                        print()
                         if obs.check_collision(self.goal, self.G[-1][0], self.buffer) == False:
                             found_shot = False
                             break
