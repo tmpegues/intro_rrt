@@ -16,11 +16,21 @@ class Domain:
         self.dims = dims
         self.obstacles = []
     
-    def rand_point(self):
-        """Generates a random point inside the domain"""
+    def rand_point(self, check_obs = False):
+        """Generates a random point inside the domain
+           check_obs should be True to verify that the point is not in an obs"""
         p1 = np.random.rand(self.num_dims)
         point2 = [x*(top - bot) + bot for x, (bot, top) in zip(p1, self.dims)]
-
+        if check_obs == False:
+            return point2
+        elif check_obs == True:
+            continue_count = 0
+            while continue_count != len(self.obstacles):
+                continue_count = 0
+                point2 = self.rand_point()
+                for obs in self.obstacles:
+                    if obs.check_point(point2,1) != False:
+                        continue_count += 1 
         return point2
     
     def in_domain(self, point):
