@@ -1,0 +1,10 @@
+Worked with: Derek, Saif
+[1] "math — Mathematical functions." docs.python.org. Accessed 9 Sept 2025. [Online] Available: https://docs.python.org/3/library/math.html#math.dist
+
+[2] "Scatter plot with a legend." matplotlib.org. Accessed 9 Sept 2025. [Online] Available: https://matplotlib.org/stable/gallery/lines_bars_and_markers/scatter_with_legend.html#sphx-glr-gallery-lines-bars-and-markers-scatter-with-legend-py
+
+[3] "Line Collection." matplotlib.org. Accessed 9 Sept 2025. [Online] Available: https://matplotlib.org/3.1.1/gallery/shapes_and_collections/line_collection.html
+
+[4] Filler text Available: https://stackoverflow.com/a/27743263
+
+[5] Filler text Available: https://stackoverflow.com/a/9216646
