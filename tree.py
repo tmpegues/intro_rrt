@@ -117,9 +117,9 @@ class Tree:
 
     def show_tree(self, domain):
         """Display the tree, but only if it's 2D"""
-        if self.num_dims != 2:
+        if self.num_dims != 2 and self.num_dims !=3:
             print("Cannot yet display anything but 2D")
-        else:
+        elif self.num_dims == 2:
             ##### Begin_Citation [2] #####
             fig, ax = plt.subplots()
             ax.set(xlim=(domain.dims[0]), ylim = domain.dims[1])
@@ -128,7 +128,7 @@ class Tree:
             if domain.obstacles != []:
                 for obs in domain.obstacles:
                     if obs.shape == "circle":
-                        circles.append(plt.Circle(obs.center,obs.dims[0], color = "b"))
+                        circles.append(plt.Circle(obs.center,obs.dims[0], color = "y"))
                 if circles != []:
                     for circle in circles:
                         ax.add_patch(circle)
@@ -151,11 +151,67 @@ class Tree:
                     path_segs.append([(self.path[i]),(self.path[i+1])])
                 path_lines = LineCollection(path_segs, color = "blue")
                 ax.add_collection(path_lines)
-            
             ##### End_Citation [3] #####
-            ax.set_aspect(1)
+            ax.set_aspect("equal")
             plt.show()
             ##### End_Citation [2] #####
+
+        elif self.num_dims == 3:
+            ##### Begin_Citation [2] #####
+            fig = plt.figure()
+            ax = fig.add_subplot(projection="3d")
+            ax.set(xlim=(domain.dims[0]), ylim = domain.dims[1], zlim = domain.dims[2])
+            ax.set_aspect("equal")
+            #ax.set_zlim(domain.dims[2])
+            segs = []
+            circles = []
+            if domain.obstacles != []:
+                for obs in domain.obstacles:
+                    if obs.shape == "circle":
+                        #circles.append(plt.Circle(obs.center,obs.dims[0], color = "b"))
+                        ##### Begin_Citation [6] #####
+                        u = np.linspace(0, 2 * np.pi, 100)
+                        v = np.linspace(0, np.pi, 100)
+                        x = obs.dims[0] * np.outer(np.cos(u), np.sin(v)) + obs.center[0]
+                        y = obs.dims[0] * np.outer(np.sin(u), np.sin(v)) + obs.center[1]
+                        z = obs.dims[0] * np.outer(np.ones(np.size(u)), np.cos(v)) + obs.center[2]
+                        ##### End_Citation [6] #####
+                        ax.plot_surface(x, y, z, color="y")
+            for i in range(len(self.G) - 1):
+                ((x1,y1,z1), point2) = self.G[i+1]
+                if i == 0:
+                    ax.scatter(x1, y1, z1, color = "green")
+                ##### Begin_Citation [3] #####
+                else:
+                    (x2, y2, z2) = point2
+                    segs.append([(x1, y1, z1), (x2, y2, z2)])
+                    ax.scatter(x1, y1, z1, color = "black")
+            # Plot the path dots in if known
+            if self.path != None:
+                for (x, y, z) in self.path:
+                    ax.scatter(x, y, z, color = "b")
+            
+            # Show start 
+            (x, y, z) = self.G[0][0]
+            ax.scatter(x, y, z, color = "green")
+
+            # Show goal
+            if self.goal != None:
+                (x, y, z) = self.G[-1][0]
+                ax.scatter(x, y, z, color = "red")
+                
+            """
+            for seg in segs:
+                (x1, y1, z1) = seg[0]
+                (x2, y2, z2) = seg[1]
+                ax.plot([x1, y1, z1],[x2, y2, z2], color = "r")
+            """
+            
+
+            ##### End_Citation [3] #####
+            
+            plt.show()
+
 
     def trace_path(self):
         """When the tree hits the goal, run this to actually find the path
@@ -165,7 +221,8 @@ class Tree:
         if last_vector[0] != self.goal:
             print("Tree did not hit goal")
             return None
-        path = [[last_vector[0][0],last_vector[0][1]]]
+        
+        path = [list(last_vector[0])]
         at_start = False
         while not at_start:
             for vec in self.G:
