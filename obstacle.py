@@ -37,7 +37,7 @@ class Obstacle:
             # Check if path intersects the circle
             # Find point on line closest to circle center
             dist = dt.eu_dist(qnear,qnew)
-            #dist = np.linalg.norm([near-new for near, new in zip(qnear,qnew)])
+
             ##### Begin_Citation [4] #####
             if dist == 0:
                 unit_vector = np.zeros(len(qnear))

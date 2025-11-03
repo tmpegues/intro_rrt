@@ -237,3 +237,41 @@ class Tree:
         self.path = path
         return path
 
+    def optimize_path(self, domain):
+        """The default implementation here finds a path, but does not optimize that path.
+            optimize_path will attempt to remove unnecessary steps in the path to shorten it."""
+        # Withe a tree with n steps, the step n is already a straight shot to the target,
+            # We need to check the rest of the step end points starting with step n-1
+        new_tree = self.path.copy()
+        new_tree.reverse()
+        last_tree = []
+
+        reset = True
+        while last_tree != new_tree:
+            last_tree = new_tree.copy()
+            start_of_tree = new_tree.copy()
+            end_of_tree = [start_of_tree.pop()]
+            end_of_tree.insert(0, start_of_tree.pop())
+            reset = False
+            while not reset:
+                # check if the any two steps can connect with eachother, starting with
+                # check 1 -> n-1, then 2->n-1, ..., then 1->n-2, 2->n-2, ...
+                found_shot = True
+                for i in range(len(start_of_tree)):
+                    step = start_of_tree[i]
+                    if len(domain.obstacles) > 0:
+                        for obs in domain.obstacles:
+                            if obs.check_collision(step, end_of_tree[0], self.buffer) == False:
+                                found_shot = False
+                                break
+                    if found_shot == True:
+                        new_tree = start_of_tree[0:i+1].copy()
+                        new_tree.extend(end_of_tree)
+                        reset = True
+                        break
+                # if we get through all steps without finding a shortcut, transfer one step from the start list to the end list
+                if not reset and len(start_of_tree) > 0:
+                    end_of_tree.insert(0, start_of_tree.pop())
+        new_tree.reverse()
+        self.path = new_tree
+
