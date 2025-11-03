@@ -15,9 +15,3 @@ def point_in_seg(point, end_near, end_far, buffer):
     if diff >.00001:
         on_line = False
     return on_line
-
-buffer = 0
-point = [0,.1]
-end1 = [-1, 0]
-end2 = [1, 0]
-c4 = point_in_seg(point, end1, end2, buffer)
