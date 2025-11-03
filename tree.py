@@ -166,19 +166,7 @@ class Tree:
             ax.set_aspect("equal")
             #ax.set_zlim(domain.dims[2])
             segs = []
-            circles = []
-            if domain.obstacles != []:
-                for obs in domain.obstacles:
-                    if obs.shape == "circle":
-                        #circles.append(plt.Circle(obs.center,obs.dims[0], color = "b"))
-                        ##### Begin_Citation [6] #####
-                        u = np.linspace(0, 2 * np.pi, 100)
-                        v = np.linspace(0, np.pi, 100)
-                        x = obs.dims[0] * np.outer(np.cos(u), np.sin(v)) + obs.center[0]
-                        y = obs.dims[0] * np.outer(np.sin(u), np.sin(v)) + obs.center[1]
-                        z = obs.dims[0] * np.outer(np.ones(np.size(u)), np.cos(v)) + obs.center[2]
-                        ##### End_Citation [6] #####
-                        ax.plot_surface(x, y, z, color="y")
+
             for i in range(len(self.G) - 1):
                 ((x1,y1,z1), point2) = self.G[i+1]
                 if i == 0:
@@ -202,13 +190,25 @@ class Tree:
                 (x, y, z) = self.G[-1][0]
                 ax.scatter(x, y, z, color = "red")
 
-            """
+            circles = []
+            if domain.obstacles != []:
+                for obs in domain.obstacles:
+                    if obs.shape == "circle":
+                        #circles.append(plt.Circle(obs.center,obs.dims[0], color = "b"))
+                        ##### Begin_Citation [6] #####
+                        u = np.linspace(0, 2 * np.pi, 100)
+                        v = np.linspace(0, np.pi, 100)
+                        x = obs.dims[0] * np.outer(np.cos(u), np.sin(v)) + obs.center[0]
+                        y = obs.dims[0] * np.outer(np.sin(u), np.sin(v)) + obs.center[1]
+                        z = obs.dims[0] * np.outer(np.ones(np.size(u)), np.cos(v)) + obs.center[2]
+                        ##### End_Citation [6] #####
+                        ax.plot_surface(x, y, z, color="y")
+
+            # Show the path
             for seg in segs:
                 (x1, y1, z1) = seg[0]
                 (x2, y2, z2) = seg[1]
-                ax.plot([x1, y1, z1],[x2, y2, z2], color = "r")
-            """
-
+                ax.plot([x1, x2], [y1, y2], [z1, z2], color = "r")
 
             ##### End_Citation [3] #####
 
