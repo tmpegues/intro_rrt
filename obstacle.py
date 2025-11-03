@@ -33,10 +33,11 @@ class Obstacle:
             dist_near = dt.eu_dist(qnear, self.center)
             if dist_new - self.dims[0] <= buffer or dist_near - self.dims[0] <= buffer:
                 return False
-            
+
             # Check if path intersects the circle
             # Find point on line closest to circle center
             dist = dt.eu_dist(qnear,qnew)
+            #dist = np.linalg.norm([near-new for near, new in zip(qnear,qnew)])
             ##### Begin_Citation [4] #####
             if dist == 0:
                 unit_vector = np.zeros(len(qnear))
@@ -48,13 +49,14 @@ class Obstacle:
             ##### End_Citation [4] #####
             close_dist = dt.eu_dist(close_point, self.center)
             # Is that point actually on the segment?
+
             if dt.point_in_seg(close_point,qnear,qnew, buffer):
                 # Is that point inside the radius?
                 if close_dist - self.dims[0] <= buffer:
                     return False
             else:
                 return True
-        
+
     def check_point(self, point, buffer = None):
         if not buffer:
             buffer = 0

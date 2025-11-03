@@ -6,8 +6,8 @@ from matplotlib.collections import LineCollection
 class Tree:
     """This will be the tree builder"""
 
-    def __init__(self, q_init = None, K = None, qdot = None, buffer = None, 
-                 goal = None):
+    def __init__(self, q_init = None, K = None, qdot = None, buffer = None,
+                 goal = None, want_print = False):
         if type(q_init) == int:
             # Randomize
             pass
@@ -21,8 +21,8 @@ class Tree:
         if not buffer or buffer == 0:
             print("Buffer must be > 0. Setting to 0.1")
             buffer = 0.1
-        
-        # Each element in G will first include itself and then the point it came from 
+
+        # Each element in G will first include itself and then the point it came from
         self.G = [(q_init,None)]
         self.K = K
         self.num_dims = len(q_init)
@@ -30,6 +30,7 @@ class Tree:
         self.buffer = buffer
         self.goal = goal
         self.path = None
+        self.want_print = want_print
 
     def get_nearest(self, point):
         best_point = None
@@ -44,15 +45,15 @@ class Tree:
             if not best_point or dist < best_point[1]:
                 best_point = [self.G[i][0], dist]
         return best_point
-    
-    def new_config(self, domain, qrand, qnear, dist, want_print = False):
+
+    def new_config(self, domain, qrand, qnear, dist):
         """Adds a new configuration to the tree going from qnear toward qrand"""
-        
+
         # 1. Get direction
         # 2. Normalize
         # 3. Calculate how far to step in each dimension
         # 4. Step
-        
+
         direction = [randx - nearx for randx, nearx in zip(qrand, qnear)]
         unit_vector = [dim/dist for dim in direction]
         steps = [dim * self.qdot for dim in unit_vector]
@@ -65,28 +66,29 @@ class Tree:
         elif len(domain.obstacles) > 0 and qnew != False:
             for obs in domain.obstacles:
                 if obs.check_collision(qnew, qnear, self.buffer) == False:
-                    qnew = False 
+                    qnew = False
                     break
             if qnew != False:
                 self.G.append((qnew, qnear))
         else:
-            self.G.append((qnew, qnear))        
+            self.G.append((qnew, qnear))
 
-        if want_print:
+        if self.want_print:
+            print("")
             print(f"rand{qrand}\nnear{qnear}\ndist {dist}")
             print("")
             print(f"dir{direction}\nuv{unit_vector}\nsteps{steps}\nqnew{qnew}")
-            print(f"dist1 {dist1}")
 
         return qnew
-    
-    def run_rrt(self, domain, want_print = False):
+
+    def run_rrt(self, domain):
         if not self.goal:
             while len(self.G) < self.K:
                 self.random_step(domain)
-                
+
         else:
             while self.G[-1][0] != self.goal:
+                #self.show_tree(domain)
                 # Check if there's a straight shot from the last point to the goal
                 found_shot = True
                 if len(domain.obstacles) > 0:
@@ -104,13 +106,13 @@ class Tree:
                         break
         self.trace_path()
 
-    def random_step(self, domain, want_print = False):
+    def random_step(self, domain):
         # Get random point from the domain
         qrand = domain.rand_point()
         # Get nearest point in the tree
         (qnear, dist) = self.get_nearest(qrand)
         # Get new point
-        qnew = self.new_config(domain, qrand, qnear, dist, want_print = False)
+        qnew = self.new_config(domain, qrand, qnear, dist)
         # qnew will be false if this loop fails (obstacle, out of domain)
 
 
@@ -142,7 +144,7 @@ class Tree:
                     ax.scatter(x1, y1, color = "black")
             if self.goal != None:
                 ax.scatter(self.goal[0],self.goal[1], color = "red")
-            tree_lines = LineCollection(segs, colors = "red")   
+            tree_lines = LineCollection(segs, colors = "red")
             ax.add_collection(tree_lines)
             # Plot the path if known
             if self.path != None:
@@ -190,8 +192,8 @@ class Tree:
             if self.path != None:
                 for (x, y, z) in self.path:
                     ax.scatter(x, y, z, color = "b")
-            
-            # Show start 
+
+            # Show start
             (x, y, z) = self.G[0][0]
             ax.scatter(x, y, z, color = "green")
 
@@ -199,17 +201,17 @@ class Tree:
             if self.goal != None:
                 (x, y, z) = self.G[-1][0]
                 ax.scatter(x, y, z, color = "red")
-                
+
             """
             for seg in segs:
                 (x1, y1, z1) = seg[0]
                 (x2, y2, z2) = seg[1]
                 ax.plot([x1, y1, z1],[x2, y2, z2], color = "r")
             """
-            
+
 
             ##### End_Citation [3] #####
-            
+
             plt.show()
 
 
@@ -221,7 +223,7 @@ class Tree:
         if last_vector[0] != self.goal:
             print("Tree did not hit goal")
             return None
-        
+
         path = [list(last_vector[0])]
         at_start = False
         while not at_start:
@@ -234,4 +236,4 @@ class Tree:
                 at_start = True
         self.path = path
         return path
-            
+
